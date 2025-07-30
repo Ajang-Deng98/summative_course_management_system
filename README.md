@@ -1,3 +1,4 @@
+# summative_course_management_system
 # Course Management Platform
 
 A multi-feature backend system for a Course Management Platform used by academic institutions to support faculty operations, monitor student progress, and enhance academic coordination.
