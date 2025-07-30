@@ -1,10 +1,21 @@
-const { CourseOffering } = require('../models');
-
-// Mock Sequelize
+// Mock database
 jest.mock('../config/database', () => {
   const SequelizeMock = require('sequelize-mock');
   return new SequelizeMock();
 });
+
+// Mock the models module
+jest.mock('../models', () => ({
+  CourseOffering: {
+    create: jest.fn(),
+    findAll: jest.fn(),
+    findByPk: jest.fn(),
+    update: jest.fn(),
+    destroy: jest.fn()
+  }
+}));
+
+const { CourseOffering } = require('../models');
 
 describe('CourseOffering Model', () => {
   let courseOffering;

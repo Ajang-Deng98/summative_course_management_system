@@ -113,7 +113,9 @@ class ActivityService {
       };
       
       await redisClient.lPush('notifications:managers', JSON.stringify(notification));
-      console.log('Notification queued successfully:', type, activityLogId);
+      if (process.env.NODE_ENV !== 'test') {
+        console.log('Notification queued successfully:', type, activityLogId);
+      }
     } catch (error) {
       console.error('Error queuing manager notification:', error);
       // Don't throw error - notification failure shouldn't break the main operation

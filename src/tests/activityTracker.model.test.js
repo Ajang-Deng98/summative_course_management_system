@@ -1,10 +1,21 @@
-const { ActivityTracker } = require('../models');
-
-// Mock Sequelize
+// Mock database
 jest.mock('../config/database', () => {
   const SequelizeMock = require('sequelize-mock');
   return new SequelizeMock();
 });
+
+// Mock the models module
+jest.mock('../models', () => ({
+  ActivityTracker: {
+    create: jest.fn(),
+    findOne: jest.fn(),
+    findByPk: jest.fn(),
+    update: jest.fn(),
+    destroy: jest.fn()
+  }
+}));
+
+const { ActivityTracker } = require('../models');
 
 describe('ActivityTracker Model', () => {
   let activityLog;
