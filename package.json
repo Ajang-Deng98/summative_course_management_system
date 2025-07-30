@@ -1,0 +1,34 @@
+{
+  "name": "course-management-platform",
+  "version": "1.0.0",
+  "description": "A multi-feature backend system for a Course Management Platform",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest",
+    "init-db": "node init-db.js",
+    "worker": "node start-worker.js",
+    "test-connections": "node test-connections.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "i18next": "^22.4.15",
+    "jsonwebtoken": "^9.0.0",
+    "mysql2": "^3.2.4",
+    "redis": "^4.6.6",
+    "sequelize": "^6.31.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "nodemon": "^3.1.10",
+    "sequelize-mock": "^0.10.2",
+    "supertest": "^6.3.3"
+  }
+}
