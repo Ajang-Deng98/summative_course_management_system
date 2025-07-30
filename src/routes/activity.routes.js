@@ -43,7 +43,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/logs', authenticate, authorize('manager'), activityController.getAllActivityLogs);
+router.get('/logs', authenticate, authorize('manager', 'facilitator'), activityController.getAllActivityLogs);
 
 /**
  * @swagger
@@ -139,7 +139,7 @@ router.get('/logs/:id', authenticate, activityController.getActivityLogById);
 router.post(
   '/logs',
   authenticate,
-  authorize('facilitator'),
+  authorize('facilitator', 'manager'),
   [
     body('allocationId').isInt().withMessage('Allocation ID must be an integer'),
     body('weekNumber').isInt({ min: 1, max: 52 }).withMessage('Week number must be between 1 and 52'),
@@ -218,7 +218,7 @@ router.post(
 router.put(
   '/logs/:id',
   authenticate,
-  authorize('facilitator'),
+  authorize('facilitator', 'manager'),
   [
     body('attendance').optional().isArray().withMessage('Attendance must be an array'),
     body('formativeOneGrading').optional().isIn(['Done', 'Pending', 'Not Started']).withMessage('Invalid formative one grading status'),
