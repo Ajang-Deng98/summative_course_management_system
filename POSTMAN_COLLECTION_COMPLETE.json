@@ -1,0 +1,587 @@
+{
+  "info": {
+    "name": "Course Management Platform API",
+    "description": "Complete API collection for the Course Management Platform with authentication, course allocation, and activity tracking",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "manager_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "facilitator_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Manager Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('manager_token', response.token);",
+                  "    pm.collectionVariables.set('jwt_token', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"manager@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Facilitator Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('facilitator_token', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"facilitator@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Register New User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"facilitator\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Course Management (Manager)",
+      "item": [
+        {
+          "name": "Get All Course Offerings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/courses/offerings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", "offerings"]
+            }
+          }
+        },
+        {
+          "name": "Create Course Offering",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"moduleId\": 1,\n  \"facilitatorId\": 2,\n  \"cohortId\": 1,\n  \"classId\": 1,\n  \"modeId\": 1,\n  \"trimester\": 1,\n  \"intakePeriod\": \"HT1\",\n  \"startDate\": \"2024-01-15\",\n  \"endDate\": \"2024-04-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/courses/offerings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", "offerings"]
+            }
+          }
+        },
+        {
+          "name": "Update Course Offering",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trimester\": 2,\n  \"intakePeriod\": \"HT2\",\n  \"startDate\": \"2024-05-15\",\n  \"endDate\": \"2024-08-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/courses/offerings/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", "offerings", "1"]
+            }
+          }
+        },
+        {
+          "name": "Filter Courses by Trimester",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/courses/offerings?trimester=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", "offerings"],
+              "query": [
+                {
+                  "key": "trimester",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Courses by Facilitator",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/courses/offerings?facilitatorId=2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", "offerings"],
+              "query": [
+                {
+                  "key": "facilitatorId",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Facilitator Operations",
+      "item": [
+        {
+          "name": "Get My Assigned Courses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{facilitator_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/courses/facilitator",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", "facilitator"]
+            }
+          }
+        },
+        {
+          "name": "Submit Activity Log",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{facilitator_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allocationId\": 1,\n  \"weekNumber\": 1,\n  \"attendance\": [true, false, true, true],\n  \"formativeOneGrading\": \"Done\",\n  \"formativeTwoGrading\": \"Pending\",\n  \"summativeGrading\": \"Not Started\",\n  \"courseModeration\": \"Not Started\",\n  \"intranetSync\": \"Done\",\n  \"gradeBookStatus\": \"Pending\",\n  \"notes\": \"Week 1 activities completed successfully\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/activities/logs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "activities", "logs"]
+            }
+          }
+        },
+        {
+          "name": "Get My Activity Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{facilitator_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activities/facilitator",
+              "host": ["{{base_url}}"],
+              "path": ["api", "activities", "facilitator"]
+            }
+          }
+        },
+        {
+          "name": "Update Activity Log",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{facilitator_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"formativeTwoGrading\": \"Done\",\n  \"summativeGrading\": \"In Progress\",\n  \"notes\": \"Updated: All formative assessments completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/activities/logs/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "activities", "logs", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Management",
+      "item": [
+        {
+          "name": "Get All Modules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/modules",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "modules"]
+            }
+          }
+        },
+        {
+          "name": "Create Module",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Machine Learning Fundamentals\",\n  \"code\": \"MLF401\",\n  \"description\": \"Introduction to machine learning concepts and algorithms\",\n  \"credits\": 4\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/modules",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "modules"]
+            }
+          }
+        },
+        {
+          "name": "Get All Cohorts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/cohorts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "cohorts"]
+            }
+          }
+        },
+        {
+          "name": "Create Cohort",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Data Science 2024\",\n  \"year\": 2024,\n  \"program\": \"Data Science\",\n  \"startDate\": \"2024-02-01\",\n  \"endDate\": \"2024-11-30\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/cohorts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "cohorts"]
+            }
+          }
+        },
+        {
+          "name": "Get All Facilitators",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/facilitators",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "facilitators"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activity Monitoring (Manager)",
+      "item": [
+        {
+          "name": "Get All Activity Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activities/logs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "activities", "logs"]
+            }
+          }
+        },
+        {
+          "name": "Filter Logs by Week",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activities/logs?weekNumber=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "activities", "logs"],
+              "query": [
+                {
+                  "key": "weekNumber",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Logs by Facilitator",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activities/logs?facilitatorId=2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "activities", "logs"],
+              "query": [
+                {
+                  "key": "facilitatorId",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Logs by Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{manager_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activities/logs?status=Pending",
+              "host": ["{{base_url}}"],
+              "path": ["api", "activities", "logs"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Pending"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Debug & Development",
+      "item": [
+        {
+          "name": "Get All Available IDs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/debug/ids",
+              "host": ["{{base_url}}"],
+              "path": ["api", "debug", "ids"]
+            }
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "profile"]
+            }
+          }
+        },
+        {
+          "name": "API Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api",
+              "host": ["{{base_url}}"],
+              "path": ["api"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

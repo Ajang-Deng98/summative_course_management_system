@@ -1,0 +1,1529 @@
+openapi: 3.0.0
+info:
+  title: Course Management Platform API
+  description: Comprehensive API for academic institutions to manage course allocations, track facilitator activities, and support student operations
+  version: 1.0.0
+  contact:
+    name: Course Management Platform
+    email: support@coursemanagement.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from login endpoint
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        role:
+          type: string
+          enum: [manager, facilitator, student]
+          example: "facilitator"
+        active:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CourseOffering:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        moduleId:
+          type: integer
+          example: 1
+        facilitatorId:
+          type: integer
+          example: 2
+        cohortId:
+          type: integer
+          example: 1
+        classId:
+          type: integer
+          example: 1
+        modeId:
+          type: integer
+          example: 1
+        trimester:
+          type: integer
+          minimum: 1
+          maximum: 3
+          example: 1
+        intakePeriod:
+          type: string
+          enum: [HT1, HT2, FT]
+          example: "HT1"
+        startDate:
+          type: string
+          format: date
+          example: "2024-01-15"
+        endDate:
+          type: string
+          format: date
+          example: "2024-04-15"
+        active:
+          type: boolean
+          example: true
+        createdBy:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        module:
+          $ref: '#/components/schemas/Module'
+        facilitator:
+          $ref: '#/components/schemas/User'
+        cohort:
+          $ref: '#/components/schemas/Cohort'
+        class:
+          $ref: '#/components/schemas/Class'
+        mode:
+          $ref: '#/components/schemas/Mode'
+
+    ActivityTracker:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        allocationId:
+          type: integer
+          example: 1
+        weekNumber:
+          type: integer
+          minimum: 1
+          maximum: 52
+          example: 1
+        attendance:
+          type: array
+          items:
+            type: boolean
+          example: [true, false, true, true]
+        formativeOneGrading:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Done"
+        formativeTwoGrading:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Pending"
+        summativeGrading:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Not Started"
+        courseModeration:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Not Started"
+        intranetSync:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Done"
+        gradeBookStatus:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Pending"
+        submissionDate:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+        notes:
+          type: string
+          example: "Week 1 activities completed successfully"
+        createdBy:
+          type: integer
+          example: 2
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        creator:
+          $ref: '#/components/schemas/User'
+        courseOffering:
+          $ref: '#/components/schemas/CourseOffering'
+
+    Module:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        code:
+          type: string
+          example: "ABD101"
+        name:
+          type: string
+          example: "Advanced Backend Development"
+        description:
+          type: string
+          example: "Advanced concepts in backend development"
+        credits:
+          type: integer
+          example: 3
+        active:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Cohort:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Software Engineering 2024"
+        year:
+          type: integer
+          example: 2024
+        program:
+          type: string
+          example: "Software Engineering"
+        startDate:
+          type: string
+          format: date
+          example: "2024-01-15"
+        endDate:
+          type: string
+          format: date
+          example: "2024-12-15"
+        active:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Class:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "2024S"
+        year:
+          type: integer
+          example: 2024
+        active:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Mode:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Online"
+        description:
+          type: string
+          example: "Fully online delivery"
+        active:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "manager@example.com"
+        password:
+          type: string
+          format: password
+          example: "password123"
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            email:
+              type: string
+              example: "manager@example.com"
+            role:
+              type: string
+              example: "manager"
+
+    RegisterRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+      properties:
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 6
+          example: "password123"
+        role:
+          type: string
+          enum: [manager, facilitator, student]
+          example: "facilitator"
+
+    CreateCourseOfferingRequest:
+      type: object
+      required:
+        - moduleId
+        - facilitatorId
+        - cohortId
+        - classId
+        - modeId
+        - trimester
+        - intakePeriod
+      properties:
+        moduleId:
+          type: integer
+          example: 1
+        facilitatorId:
+          type: integer
+          example: 2
+        cohortId:
+          type: integer
+          example: 1
+        classId:
+          type: integer
+          example: 1
+        modeId:
+          type: integer
+          example: 1
+        trimester:
+          type: integer
+          minimum: 1
+          maximum: 3
+          example: 1
+        intakePeriod:
+          type: string
+          enum: [HT1, HT2, FT]
+          example: "HT1"
+        startDate:
+          type: string
+          format: date
+          example: "2024-01-15"
+        endDate:
+          type: string
+          format: date
+          example: "2024-04-15"
+
+    CreateActivityLogRequest:
+      type: object
+      required:
+        - allocationId
+        - weekNumber
+      properties:
+        allocationId:
+          type: integer
+          example: 1
+        weekNumber:
+          type: integer
+          minimum: 1
+          maximum: 52
+          example: 1
+        attendance:
+          type: array
+          items:
+            type: boolean
+          example: [true, false, true, true]
+        formativeOneGrading:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Done"
+        formativeTwoGrading:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Pending"
+        summativeGrading:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Not Started"
+        courseModeration:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Not Started"
+        intranetSync:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Done"
+        gradeBookStatus:
+          type: string
+          enum: [Done, Pending, Not Started]
+          example: "Pending"
+        notes:
+          type: string
+          example: "Week 1 activities completed successfully"
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Error message"
+        error:
+          type: string
+          example: "Detailed error information"
+
+    ValidationError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "email"
+              message:
+                type: string
+                example: "Valid email is required"
+
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Create a new user account with specified role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input or user already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login a user
+      description: Authenticate user and return JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/courses/offerings:
+    get:
+      tags:
+        - Course Management
+      summary: Get all course offerings with filters
+      description: Retrieve course offerings with optional filtering (Manager only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: trimester
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 3
+          description: Filter by trimester
+        - in: query
+          name: cohortId
+          schema:
+            type: integer
+          description: Filter by cohort ID
+        - in: query
+          name: intakePeriod
+          schema:
+            type: string
+            enum: [HT1, HT2, FT]
+          description: Filter by intake period
+        - in: query
+          name: facilitatorId
+          schema:
+            type: integer
+          description: Filter by facilitator ID
+        - in: query
+          name: modeId
+          schema:
+            type: integer
+          description: Filter by mode ID
+        - in: query
+          name: active
+          schema:
+            type: boolean
+          description: Filter by active status
+      responses:
+        '200':
+          description: Course offerings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseOffering'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Course Management
+      summary: Create a new course offering
+      description: Create a new course offering (Manager only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCourseOfferingRequest'
+      responses:
+        '201':
+          description: Course offering created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseOffering'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Related entity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/courses/offerings/{id}:
+    get:
+      tags:
+        - Course Management
+      summary: Get course offering by ID
+      description: Retrieve a specific course offering
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Course offering ID
+      responses:
+        '200':
+          description: Course offering retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseOffering'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Course offering not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Course Management
+      summary: Update a course offering
+      description: Update an existing course offering (Manager only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Course offering ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCourseOfferingRequest'
+      responses:
+        '200':
+          description: Course offering updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseOffering'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Course offering not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Course Management
+      summary: Delete a course offering
+      description: Delete an existing course offering (Manager only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Course offering ID
+      responses:
+        '200':
+          description: Course offering deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Course offering deleted successfully"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Course offering not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/courses/facilitator:
+    get:
+      tags:
+        - Facilitator Operations
+      summary: Get facilitator's assigned courses
+      description: Retrieve courses assigned to the authenticated facilitator
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Facilitator's courses retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseOffering'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/activities/logs:
+    get:
+      tags:
+        - Activity Tracking
+      summary: Get all activity logs with filters
+      description: Retrieve activity logs with optional filtering (Manager/Facilitator)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: facilitatorId
+          schema:
+            type: integer
+          description: Filter by facilitator ID
+        - in: query
+          name: allocationId
+          schema:
+            type: integer
+          description: Filter by allocation ID
+        - in: query
+          name: weekNumber
+          schema:
+            type: integer
+          description: Filter by week number
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [Done, Pending, Not Started]
+          description: Filter by status
+      responses:
+        '200':
+          description: Activity logs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityTracker'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Activity Tracking
+      summary: Create a new activity log
+      description: Submit a new weekly activity log (Facilitator/Manager)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivityLogRequest'
+      responses:
+        '201':
+          description: Activity log created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityTracker'
+        '400':
+          description: Invalid input or log already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Course offering not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/activities/logs/{id}:
+    get:
+      tags:
+        - Activity Tracking
+      summary: Get activity log by ID
+      description: Retrieve a specific activity log
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Activity log ID
+      responses:
+        '200':
+          description: Activity log retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityTracker'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Activity log not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Activity Tracking
+      summary: Update an activity log
+      description: Update an existing activity log (Facilitator/Manager)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Activity log ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivityLogRequest'
+      responses:
+        '200':
+          description: Activity log updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityTracker'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Activity log not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Activity Tracking
+      summary: Delete an activity log
+      description: Delete an existing activity log (Facilitator/Manager)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Activity log ID
+      responses:
+        '200':
+          description: Activity log deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Activity log deleted successfully"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Activity log not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/activities/facilitator:
+    get:
+      tags:
+        - Facilitator Operations
+      summary: Get facilitator's activity logs
+      description: Retrieve activity logs for the authenticated facilitator
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: weekNumber
+          schema:
+            type: integer
+          description: Filter by week number
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [Done, Pending, Not Started]
+          description: Filter by status
+      responses:
+        '200':
+          description: Facilitator's activity logs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityTracker'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/admin/modules:
+    get:
+      tags:
+        - Admin Management
+      summary: Get all modules
+      description: Retrieve all academic modules (Manager only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Modules retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Module'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Admin Management
+      summary: Create a new module
+      description: Create a new academic module (Manager only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - code
+              properties:
+                name:
+                  type: string
+                  example: "Machine Learning Fundamentals"
+                code:
+                  type: string
+                  example: "MLF401"
+                description:
+                  type: string
+                  example: "Introduction to machine learning concepts"
+                credits:
+                  type: integer
+                  example: 4
+      responses:
+        '201':
+          description: Module created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/admin/cohorts:
+    get:
+      tags:
+        - Admin Management
+      summary: Get all cohorts
+      description: Retrieve all student cohorts (Manager only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Cohorts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cohort'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Admin Management
+      summary: Create a new cohort
+      description: Create a new student cohort (Manager only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - year
+                - program
+              properties:
+                name:
+                  type: string
+                  example: "Data Science 2024"
+                year:
+                  type: integer
+                  example: 2024
+                program:
+                  type: string
+                  example: "Data Science"
+                startDate:
+                  type: string
+                  format: date
+                  example: "2024-02-01"
+                endDate:
+                  type: string
+                  format: date
+                  example: "2024-11-30"
+      responses:
+        '201':
+          description: Cohort created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cohort'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/admin/facilitators:
+    get:
+      tags:
+        - Admin Management
+      summary: Get all facilitators
+      description: Retrieve all users with facilitator role (Manager only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Facilitators retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 2
+                    firstName:
+                      type: string
+                      example: "Jane"
+                    lastName:
+                      type: string
+                      example: "Facilitator"
+                    email:
+                      type: string
+                      example: "facilitator@example.com"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/profile:
+    get:
+      tags:
+        - User Management
+      summary: Get current user profile
+      description: Retrieve the authenticated user's profile information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  email:
+                    type: string
+                    example: "manager@example.com"
+                  role:
+                    type: string
+                    example: "manager"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/debug/ids:
+    get:
+      tags:
+        - Debug & Development
+      summary: Get all available IDs
+      description: Retrieve all available entity IDs for testing purposes
+      responses:
+        '200':
+          description: Available IDs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  modules:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        code:
+                          type: string
+                  cohorts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        year:
+                          type: integer
+                  classes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        year:
+                          type: integer
+                  modes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                  facilitators:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        email:
+                          type: string
+                  courseOfferings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        moduleId:
+                          type: integer
+                        facilitatorId:
+                          type: integer
+                        trimester:
+                          type: integer
+                        intakePeriod:
+                          type: string
+                        active:
+                          type: boolean
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+tags:
+  - name: Authentication
+    description: User authentication and registration
+  - name: Course Management
+    description: Course offering management (Manager operations)
+  - name: Facilitator Operations
+    description: Facilitator-specific operations
+  - name: Activity Tracking
+    description: Weekly activity log management
+  - name: Admin Management
+    description: Administrative operations for modules, cohorts, etc.
+  - name: User Management
+    description: User profile and account management
+  - name: Debug & Development
+    description: Development and debugging utilities
