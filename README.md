@@ -2,6 +2,13 @@
 
 A comprehensive multi-feature backend system for academic institutions to support faculty operations, monitor student progress, and enhance academic coordination. Built with Node.js, Express, MySQL, and Redis.
 
+
+## LINK TO VIDEO AND HOSTED GITHUB PAGE FOR STUDENT REFLECTION
+
+- **Video**  https://youtu.be/DVYgd23KKcs
+- **Hosted Github page** https://ajang-deng98.github.io/summative_course_management_system/
+
+
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Technologies Used](#technologies-used)
