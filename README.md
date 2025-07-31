@@ -60,7 +60,11 @@ API documentation is available at `/api-docs` when the server is running.
 ## Project Structure
 
 ```
-├── public/                  # Static files for Student Reflection Page
+├── index.html               # Student Reflection Page (GitHub Pages)
+├── index.js                 # Reflection page JavaScript
+├── styles.css               # Reflection page styles
+├── translations.js          # i18n translations
+├── public/                  # (Legacy - files moved to root)
 ├── src/
 │   ├── config/              # Configuration files
 │   ├── controllers/         # Request handlers
@@ -99,6 +103,7 @@ API documentation is available at `/api-docs` when the server is running.
 - Simple webpage with multilingual support (English and French)
 - Reflection questions with language switching capability
 - Responsive design
+- Deployed at root level for GitHub Pages compatibility
 
 ## Testing
 

@@ -22,8 +22,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files for Student Reflection Page
-app.use(express.static('public'));
+// Serve static files for Student Reflection Page (from root for GitHub Pages)
+app.use(express.static('.'));
 
 // Swagger configuration
 const swaggerOptions = {
@@ -63,8 +63,8 @@ app.use('/api/activities', activityRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/debug', debugRoutes);
 
-// Root route
-app.get('/', (req, res) => {
+// API root route
+app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to the Course Management Platform API' });
 });
 
