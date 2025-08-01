@@ -207,7 +207,7 @@ CourseOffering
    POST /api/auth/login
    {
      "email": "manager@example.com",
-     "password": "password123"
+     "password": "password123456789"
    }
    
    Response:
@@ -285,7 +285,7 @@ curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "manager@example.com",
-    "password": "password123"
+    "password": "password123456789"
   }'
 
 # Create course offering
